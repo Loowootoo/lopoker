@@ -6,15 +6,15 @@ import (
 
 type Player struct {
 	Hand     []Card
-	handSort []Card
+	HandSort []Card
 	Credit   int
 	Bet      int
 }
 
 func NewPlayer(credit int) *Player {
 	hand := make([]Card, 5)
-	handSort := make([]Card, 5)
-	return &Player{hand, handSort, credit, 0}
+	HandSort := make([]Card, 5)
+	return &Player{hand, HandSort, credit, 0}
 }
 
 var OddsTable = map[string]int{
@@ -41,20 +41,20 @@ const (
 func (p *Player) sortHand() {
 	num := len(p.Hand)
 	for i := 0; i < num; i++ {
-		p.handSort[i] = p.Hand[i]
-		if p.handSort[i].number == 0 {
-			p.handSort[i].number = 13
+		p.HandSort[i] = p.Hand[i]
+		if p.HandSort[i].number == 0 {
+			p.HandSort[i].number = 13
 		}
 	}
 	// first sort number
 	for i := 0; i < num-1; i++ {
 		isChange := false
 		for j := 0; j < num-1-i; j++ {
-			if p.handSort[j].number == 0 {
-				p.handSort[j].number = 13
+			if p.HandSort[j].number == 0 {
+				p.HandSort[j].number = 13
 			}
-			if p.handSort[j].number > p.handSort[j+1].number {
-				p.handSort[j], p.handSort[j+1] = p.handSort[j+1], p.handSort[j]
+			if p.HandSort[j].number > p.HandSort[j+1].number {
+				p.HandSort[j], p.HandSort[j+1] = p.HandSort[j+1], p.HandSort[j]
 				isChange = true
 			}
 		}
@@ -66,9 +66,9 @@ func (p *Player) sortHand() {
 	for i := 0; i < num-1; i++ {
 		isChange := false
 		for j := 0; j < num-1-i; j++ {
-			if p.handSort[j].number == p.handSort[j+1].number {
-				if p.handSort[j].pattern < p.handSort[j+1].pattern {
-					p.handSort[j], p.handSort[j+1] = p.handSort[j+1], p.handSort[j]
+			if p.HandSort[j].number == p.HandSort[j+1].number {
+				if p.HandSort[j].pattern < p.HandSort[j+1].pattern {
+					p.HandSort[j], p.HandSort[j+1] = p.HandSort[j+1], p.HandSort[j]
 					isChange = true
 				}
 			}
@@ -78,8 +78,8 @@ func (p *Player) sortHand() {
 		}
 	}
 	for i := 0; i < num; i++ {
-		if p.handSort[i].number == 13 {
-			p.handSort[i].number = 0
+		if p.HandSort[i].number == 13 {
+			p.HandSort[i].number = 0
 		}
 	}
 
@@ -90,8 +90,8 @@ func (p *Player) ShowPlayerCard() {
 	}
 }
 func (p *Player) ShowPlayerSortCard() {
-	for i := 0; i < len(p.handSort); i++ {
-		fmt.Println(Cardnumber[p.handSort[i].number] + " " + CardPattern[p.handSort[i].pattern])
+	for i := 0; i < len(p.HandSort); i++ {
+		fmt.Println(Cardnumber[p.HandSort[i].number] + " " + CardPattern[p.HandSort[i].pattern])
 	}
 }
 
@@ -116,11 +116,11 @@ func (p *Player) getPatternCount(pattern int) int {
 }
 
 func (p *Player) chkRoyal() bool {
-	if p.handSort[4].number == 0 {
-		if p.handSort[0].number == 9 &&
-			p.handSort[1].number == 10 &&
-			p.handSort[2].number == 11 &&
-			p.handSort[3].number == 12 {
+	if p.HandSort[4].number == 0 {
+		if p.HandSort[0].number == 9 &&
+			p.HandSort[1].number == 10 &&
+			p.HandSort[2].number == 11 &&
+			p.HandSort[3].number == 12 {
 			return true
 		}
 	}
@@ -130,20 +130,20 @@ func (p *Player) chkRoyal() bool {
 func (p *Player) chkStraight() bool {
 	if p.chkRoyal() {
 		return true
-	} else if p.handSort[0].number+1 == p.handSort[1].number &&
-		p.handSort[1].number+1 == p.handSort[2].number &&
-		p.handSort[2].number+1 == p.handSort[3].number &&
-		p.handSort[3].number+1 == p.handSort[4].number {
+	} else if p.HandSort[0].number+1 == p.HandSort[1].number &&
+		p.HandSort[1].number+1 == p.HandSort[2].number &&
+		p.HandSort[2].number+1 == p.HandSort[3].number &&
+		p.HandSort[3].number+1 == p.HandSort[4].number {
 		return true
 	}
 	return false
 }
 
 func (p *Player) chkFlush() bool {
-	if p.handSort[0].pattern == p.handSort[1].pattern &&
-		p.handSort[0].pattern == p.handSort[2].pattern &&
-		p.handSort[0].pattern == p.handSort[3].pattern &&
-		p.handSort[0].pattern == p.handSort[4].pattern {
+	if p.HandSort[0].pattern == p.HandSort[1].pattern &&
+		p.HandSort[0].pattern == p.HandSort[2].pattern &&
+		p.HandSort[0].pattern == p.HandSort[3].pattern &&
+		p.HandSort[0].pattern == p.HandSort[4].pattern {
 		return true
 	}
 	return false
@@ -164,8 +164,8 @@ func (p *Player) chkStraightFlush() bool {
 
 func (p *Player) getSameKind(kind int) int {
 	count := 0
-	for i := 0; i < len(p.handSort); i++ {
-		if p.handSort[i].number == kind {
+	for i := 0; i < len(p.HandSort); i++ {
+		if p.HandSort[i].number == kind {
 			count++
 		}
 	}
@@ -175,7 +175,7 @@ func (p *Player) getSameKind(kind int) int {
 func (p *Player) chkFourOfKind() bool {
 	max := 0
 	for i := 0; i < 5; i++ {
-		num := p.getSameKind(p.handSort[i].number)
+		num := p.getSameKind(p.HandSort[i].number)
 		if num > max {
 			max = num
 		}
@@ -189,7 +189,7 @@ func (p *Player) chkFourOfKind() bool {
 func (p *Player) chkThreeOfKind() bool {
 	max := 0
 	for i := 0; i < 5; i++ {
-		num := p.getSameKind(p.handSort[i].number)
+		num := p.getSameKind(p.HandSort[i].number)
 		if num > max {
 			max = num
 		}
@@ -201,11 +201,11 @@ func (p *Player) chkThreeOfKind() bool {
 }
 
 func (p *Player) chkTwoPair() bool {
-	if p.handSort[0].number == p.handSort[1].number && p.handSort[2].number == p.handSort[3].number {
+	if p.HandSort[0].number == p.HandSort[1].number && p.HandSort[2].number == p.HandSort[3].number {
 		return true
-	} else if p.handSort[0].number == p.handSort[1].number && p.handSort[3].number == p.handSort[4].number {
+	} else if p.HandSort[0].number == p.HandSort[1].number && p.HandSort[3].number == p.HandSort[4].number {
 		return true
-	} else if p.handSort[1].number == p.handSort[2].number && p.handSort[3].number == p.handSort[4].number {
+	} else if p.HandSort[1].number == p.HandSort[2].number && p.HandSort[3].number == p.HandSort[4].number {
 		return true
 	}
 	return false
@@ -213,7 +213,7 @@ func (p *Player) chkTwoPair() bool {
 
 func (p *Player) chkOnePair() bool {
 	for i := 0; i < 5; i++ {
-		num := p.getSameKind(p.handSort[i].number)
+		num := p.getSameKind(p.HandSort[i].number)
 		if num == 2 {
 			return true
 		}
@@ -223,8 +223,8 @@ func (p *Player) chkOnePair() bool {
 
 func (p *Player) chkHighPair() bool {
 	for i := 0; i < 5; i++ {
-		if p.handSort[i].number > 9 || p.handSort[i].number == 0 {
-			num := p.getSameKind(p.handSort[i].number)
+		if p.HandSort[i].number > 9 || p.HandSort[i].number == 0 {
+			num := p.getSameKind(p.HandSort[i].number)
 			if num == 2 {
 				return true
 			}

@@ -1,9 +1,5 @@
 package game
 
-import (
-	"fmt"
-)
-
 type Game struct {
 	Player  *Player
 	CardSet *Cards
@@ -35,9 +31,35 @@ func (g *Game) ShowPlayerCard() {
 	g.Player.ShowPlayerSortCard()
 }
 
+var testCount float64
+
 func (g *Game) Run() {
-	g.Shuffle()
-	g.Deal()
-	g.ShowPlayerCard()
-	fmt.Println(g.Player.CheckWin())
+	testCount++
+	if testCount > 60 {
+		g.Shuffle()
+		g.Deal()
+		testCount = 0
+	}
+}
+
+type MainGameState int
+
+const (
+	GameDEMO MainGameState = iota
+	GameSTART
+	GamePLAY
+	GameCHECK
+	GameWIN
+	GameLOSE
+	GameACCOUNT
+)
+
+var GameMessage = [...]string{
+	"GAME DEMO",
+	"GAME START",
+	"GAME PLAY",
+	"GAME CHECK",
+	"GAME WIN",
+	"GAME LOSE",
+	"GAME ACCOUNT",
 }

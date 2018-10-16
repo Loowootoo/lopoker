@@ -34,6 +34,16 @@ type Card struct {
 	val     int
 }
 
+func (c *Card) GetPattern() int {
+	return c.pattern
+}
+func (c *Card) GetNumber() int {
+	return c.number
+}
+func (c *Card) GetVal() int {
+	return c.val
+}
+
 type Cards struct {
 	Sets         []Card
 	CurrentIndex int
