@@ -1,13 +1,13 @@
 package ui2d
 
 import (
+	"Loowootoo/lopoker/game"
 	"Loowootoo/lopoker/ui2d/assets/fonts"
 	"Loowootoo/lopoker/ui2d/assets/pcard"
 	"bytes"
 	"image"
 	"image/color"
 	_ "image/png"
-	"strings"
 
 	"github.com/golang/freetype/truetype"
 	"github.com/hajimehoshi/ebiten"
@@ -70,11 +70,9 @@ var (
 
 func (ui *UI2d) DrawTextWithShadow(rt *ebiten.Image, str string, x, y, scale int, clr color.Color) {
 	offsetY := fontBaseSize * scale
-	for _, line := range strings.Split(str, "\n") {
-		y += offsetY
-		text.Draw(rt, line, ui.normalFont, x+2, y+2, shadowColor)
-		text.Draw(rt, line, ui.normalFont, x, y, clr)
-	}
+	y += offsetY
+	text.Draw(rt, str, ui.normalFont, x+2, y+2, shadowColor)
+	text.Draw(rt, str, ui.normalFont, x, y, clr)
 }
 
 func (ui *UI2d) DrawTextWithShadowCenter(rt *ebiten.Image, str string, x, y, scale int, clr color.Color, width int) {
@@ -101,4 +99,30 @@ func (ui *UI2d) DrawCard(screen *ebiten.Image, pos Pos, num int) {
 	op.GeoM.Scale(1, 1)
 	op.GeoM.Translate(pos.X, pos.Y)
 	screen.DrawImage(ui.cardGrp, op)
+}
+
+func (ui *UI2d) DrawHandCard(screen *ebiten.Image, card [5]game.Card) {
+	op := &ebiten.DrawImageOptions{}
+	for i := 0; i < 5; i++ {
+		op.GeoM.Reset()
+		x := card[i].Number * cardWidth
+		y := card[i].Pattern * cardHeight
+		srcRect := image.Rect(x, y, x+cardWidth, y+cardHeight)
+		op.SourceRect = &srcRect
+		op.GeoM.Scale(1, 1)
+		op.GeoM.Translate(CardPos[i].X, CardPos[i].Y)
+		screen.DrawImage(ui.cardGrp, op)
+	}
+}
+
+func (ui *UI2d) DrawHandHeld(screen *ebiten.Image, card [5]bool) {
+	for i := 0; i < 5; i++ {
+		if card[i] {
+			ui.DrawTextWithShadowCenter(screen, "HELD", int(CardPos[i].X), int(CardPos[i].Y+150), 1, color.White, 100)
+		}
+	}
+}
+
+func (ui *UI2d) DrawMessage(screen *ebiten.Image, msg string) {
+	ui.DrawTextWithShadowCenter(screen, msg, 0, 520, 1, color.White, 600)
 }

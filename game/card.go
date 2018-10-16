@@ -29,19 +29,9 @@ var Cardnumber = map[int]string{
 }
 
 type Card struct {
-	pattern int
-	number  int
-	val     int
-}
-
-func (c *Card) GetPattern() int {
-	return c.pattern
-}
-func (c *Card) GetNumber() int {
-	return c.number
-}
-func (c *Card) GetVal() int {
-	return c.val
+	Pattern int
+	Number  int
+	Val     int
 }
 
 type Cards struct {
@@ -52,17 +42,17 @@ type Cards struct {
 func NewCardSet() *Cards {
 	Sets := make([]Card, 52)
 	for i := 0; i < len(Sets); i++ {
-		Sets[i].pattern = i / 13
-		Sets[i].number = i % 13
-		Sets[i].val = i
+		Sets[i].Pattern = i / 13
+		Sets[i].Number = i % 13
+		Sets[i].Val = i
 	}
 	return &Cards{Sets, 0}
 }
 
 func (card *Cards) cardSwap(i, j int) {
-	card.Sets[i].val, card.Sets[j].val = card.Sets[j].val, card.Sets[i].val
-	card.Sets[i].pattern, card.Sets[j].pattern = card.Sets[j].pattern, card.Sets[i].pattern
-	card.Sets[i].number, card.Sets[j].number = card.Sets[j].number, card.Sets[i].number
+	card.Sets[i].Val, card.Sets[j].Val = card.Sets[j].Val, card.Sets[i].Val
+	card.Sets[i].Pattern, card.Sets[j].Pattern = card.Sets[j].Pattern, card.Sets[i].Pattern
+	card.Sets[i].Number, card.Sets[j].Number = card.Sets[j].Number, card.Sets[i].Number
 }
 
 func (card *Cards) DeckCard() {
@@ -70,12 +60,15 @@ func (card *Cards) DeckCard() {
 }
 
 func (card *Cards) ShowCard(num int) {
-	println(Cardnumber[card.Sets[num].number] + " of " + CardPattern[card.Sets[num].pattern])
+	println(Cardnumber[card.Sets[num].Number] + " of " + CardPattern[card.Sets[num].Pattern])
 }
 
 func (card *Cards) GetNextCard() Card {
 	c := card.Sets[card.CurrentIndex]
 	card.CurrentIndex++
-	card.CurrentIndex %= 52
+	if card.CurrentIndex >= 51 {
+		card.DeckCard()
+		card.CurrentIndex = 0
+	}
 	return c
 }

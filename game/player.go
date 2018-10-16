@@ -5,16 +5,15 @@ import (
 )
 
 type Player struct {
-	Hand     []Card
-	HandSort []Card
+	Hand     [5]Card
+	HandSort [5]Card
+	Held     [5]bool
 	Credit   int
 	Bet      int
 }
 
 func NewPlayer(credit int) *Player {
-	hand := make([]Card, 5)
-	HandSort := make([]Card, 5)
-	return &Player{hand, HandSort, credit, 0}
+	return &Player{Credit: credit, Bet: 0}
 }
 
 var OddsTable = map[string]int{
@@ -42,18 +41,18 @@ func (p *Player) sortHand() {
 	num := len(p.Hand)
 	for i := 0; i < num; i++ {
 		p.HandSort[i] = p.Hand[i]
-		if p.HandSort[i].number == 0 {
-			p.HandSort[i].number = 13
+		if p.HandSort[i].Number == 0 {
+			p.HandSort[i].Number = 13
 		}
 	}
 	// first sort number
 	for i := 0; i < num-1; i++ {
 		isChange := false
 		for j := 0; j < num-1-i; j++ {
-			if p.HandSort[j].number == 0 {
-				p.HandSort[j].number = 13
+			if p.HandSort[j].Number == 0 {
+				p.HandSort[j].Number = 13
 			}
-			if p.HandSort[j].number > p.HandSort[j+1].number {
+			if p.HandSort[j].Number > p.HandSort[j+1].Number {
 				p.HandSort[j], p.HandSort[j+1] = p.HandSort[j+1], p.HandSort[j]
 				isChange = true
 			}
@@ -66,8 +65,8 @@ func (p *Player) sortHand() {
 	for i := 0; i < num-1; i++ {
 		isChange := false
 		for j := 0; j < num-1-i; j++ {
-			if p.HandSort[j].number == p.HandSort[j+1].number {
-				if p.HandSort[j].pattern < p.HandSort[j+1].pattern {
+			if p.HandSort[j].Number == p.HandSort[j+1].Number {
+				if p.HandSort[j].Pattern < p.HandSort[j+1].Pattern {
 					p.HandSort[j], p.HandSort[j+1] = p.HandSort[j+1], p.HandSort[j]
 					isChange = true
 				}
@@ -78,27 +77,27 @@ func (p *Player) sortHand() {
 		}
 	}
 	for i := 0; i < num; i++ {
-		if p.HandSort[i].number == 13 {
-			p.HandSort[i].number = 0
+		if p.HandSort[i].Number == 13 {
+			p.HandSort[i].Number = 0
 		}
 	}
 
 }
 func (p *Player) ShowPlayerCard() {
 	for i := 0; i < len(p.Hand); i++ {
-		fmt.Println(Cardnumber[p.Hand[i].number] + " " + CardPattern[p.Hand[i].pattern])
+		fmt.Println(Cardnumber[p.Hand[i].Number] + " " + CardPattern[p.Hand[i].Pattern])
 	}
 }
 func (p *Player) ShowPlayerSortCard() {
 	for i := 0; i < len(p.HandSort); i++ {
-		fmt.Println(Cardnumber[p.HandSort[i].number] + " " + CardPattern[p.HandSort[i].pattern])
+		fmt.Println(Cardnumber[p.HandSort[i].Number] + " " + CardPattern[p.HandSort[i].Pattern])
 	}
 }
 
 func (p *Player) getJokerCount() int {
 	jokerCount := 0
 	for i := 0; i < 5; i++ {
-		if p.Hand[i].pattern == Joker {
+		if p.Hand[i].Pattern == Joker {
 			jokerCount++
 		}
 	}
@@ -108,19 +107,38 @@ func (p *Player) getJokerCount() int {
 func (p *Player) getPatternCount(pattern int) int {
 	patternCount := 0
 	for i := 0; i < 5; i++ {
-		if p.Hand[i].pattern == pattern {
+		if p.Hand[i].Pattern == pattern {
 			patternCount++
 		}
 	}
 	return patternCount
 }
 
+func (p *Player) ResetHeld() {
+	for i := 0; i < 5; i++ {
+		p.Held[i] = false
+	}
+}
+
+func (p *Player) setHeld(sortIndex int) {
+	for i := 0; i < 5; i++ {
+		if p.HandSort[sortIndex].Number == p.Hand[i].Number && p.HandSort[sortIndex].Pattern == p.Hand[i].Pattern {
+			p.Held[i] = true
+		}
+	}
+}
+
 func (p *Player) chkRoyal() bool {
-	if p.HandSort[4].number == 0 {
-		if p.HandSort[0].number == 9 &&
-			p.HandSort[1].number == 10 &&
-			p.HandSort[2].number == 11 &&
-			p.HandSort[3].number == 12 {
+	if p.HandSort[4].Number == 0 {
+		if p.HandSort[0].Number == 9 &&
+			p.HandSort[1].Number == 10 &&
+			p.HandSort[2].Number == 11 &&
+			p.HandSort[3].Number == 12 {
+			p.Held[0] = true
+			p.Held[1] = true
+			p.Held[2] = true
+			p.Held[3] = true
+			p.Held[4] = true
 			return true
 		}
 	}
@@ -130,20 +148,30 @@ func (p *Player) chkRoyal() bool {
 func (p *Player) chkStraight() bool {
 	if p.chkRoyal() {
 		return true
-	} else if p.HandSort[0].number+1 == p.HandSort[1].number &&
-		p.HandSort[1].number+1 == p.HandSort[2].number &&
-		p.HandSort[2].number+1 == p.HandSort[3].number &&
-		p.HandSort[3].number+1 == p.HandSort[4].number {
+	} else if p.HandSort[0].Number+1 == p.HandSort[1].Number &&
+		p.HandSort[1].Number+1 == p.HandSort[2].Number &&
+		p.HandSort[2].Number+1 == p.HandSort[3].Number &&
+		p.HandSort[3].Number+1 == p.HandSort[4].Number {
+		p.Held[0] = true
+		p.Held[1] = true
+		p.Held[2] = true
+		p.Held[3] = true
+		p.Held[4] = true
 		return true
 	}
 	return false
 }
 
 func (p *Player) chkFlush() bool {
-	if p.HandSort[0].pattern == p.HandSort[1].pattern &&
-		p.HandSort[0].pattern == p.HandSort[2].pattern &&
-		p.HandSort[0].pattern == p.HandSort[3].pattern &&
-		p.HandSort[0].pattern == p.HandSort[4].pattern {
+	if p.HandSort[0].Pattern == p.HandSort[1].Pattern &&
+		p.HandSort[0].Pattern == p.HandSort[2].Pattern &&
+		p.HandSort[0].Pattern == p.HandSort[3].Pattern &&
+		p.HandSort[0].Pattern == p.HandSort[4].Pattern {
+		p.Held[0] = true
+		p.Held[1] = true
+		p.Held[2] = true
+		p.Held[3] = true
+		p.Held[4] = true
 		return true
 	}
 	return false
@@ -165,7 +193,7 @@ func (p *Player) chkStraightFlush() bool {
 func (p *Player) getSameKind(kind int) int {
 	count := 0
 	for i := 0; i < len(p.HandSort); i++ {
-		if p.HandSort[i].number == kind {
+		if p.HandSort[i].Number == kind {
 			count++
 		}
 	}
@@ -174,13 +202,20 @@ func (p *Player) getSameKind(kind int) int {
 
 func (p *Player) chkFourOfKind() bool {
 	max := 0
+	card := 0
 	for i := 0; i < 5; i++ {
-		num := p.getSameKind(p.HandSort[i].number)
+		num := p.getSameKind(p.HandSort[i].Number)
 		if num > max {
 			max = num
+			card = p.HandSort[i].Number
 		}
 	}
 	if max == 4 {
+		for i := 0; i < 5; i++ {
+			if p.Hand[i].Number == card {
+				p.Held[i] = true
+			}
+		}
 		return true
 	}
 	return false
@@ -188,33 +223,58 @@ func (p *Player) chkFourOfKind() bool {
 
 func (p *Player) chkThreeOfKind() bool {
 	max := 0
+	card := 0
 	for i := 0; i < 5; i++ {
-		num := p.getSameKind(p.HandSort[i].number)
+		num := p.getSameKind(p.HandSort[i].Number)
 		if num > max {
 			max = num
+			card = p.HandSort[i].Number
 		}
 	}
 	if max == 3 {
+		for i := 0; i < 5; i++ {
+			if p.Hand[i].Number == card {
+				p.Held[i] = true
+			}
+		}
 		return true
 	}
 	return false
 }
-
 func (p *Player) chkTwoPair() bool {
-	if p.HandSort[0].number == p.HandSort[1].number && p.HandSort[2].number == p.HandSort[3].number {
+	if p.HandSort[0].Number == p.HandSort[1].Number && p.HandSort[2].Number == p.HandSort[3].Number {
+		p.setHeld(0)
+		p.setHeld(1)
+		p.setHeld(2)
+		p.setHeld(3)
 		return true
-	} else if p.HandSort[0].number == p.HandSort[1].number && p.HandSort[3].number == p.HandSort[4].number {
+	} else if p.HandSort[0].Number == p.HandSort[1].Number && p.HandSort[3].Number == p.HandSort[4].Number {
+		p.setHeld(0)
+		p.setHeld(1)
+		p.setHeld(3)
+		p.setHeld(4)
 		return true
-	} else if p.HandSort[1].number == p.HandSort[2].number && p.HandSort[3].number == p.HandSort[4].number {
+	} else if p.HandSort[1].Number == p.HandSort[2].Number && p.HandSort[3].Number == p.HandSort[4].Number {
+		p.setHeld(1)
+		p.setHeld(2)
+		p.setHeld(3)
+		p.setHeld(4)
 		return true
 	}
 	return false
 }
 
 func (p *Player) chkOnePair() bool {
+	card := 0
 	for i := 0; i < 5; i++ {
-		num := p.getSameKind(p.HandSort[i].number)
+		num := p.getSameKind(p.HandSort[i].Number)
 		if num == 2 {
+			card = p.HandSort[i].Number
+			for j := 0; j < 5; j++ {
+				if p.Hand[j].Number == card {
+					p.Held[j] = true
+				}
+			}
 			return true
 		}
 	}
@@ -223,9 +283,15 @@ func (p *Player) chkOnePair() bool {
 
 func (p *Player) chkHighPair() bool {
 	for i := 0; i < 5; i++ {
-		if p.HandSort[i].number > 9 || p.HandSort[i].number == 0 {
-			num := p.getSameKind(p.HandSort[i].number)
+		if p.HandSort[i].Number > 9 || p.HandSort[i].Number == 0 {
+			num := p.getSameKind(p.HandSort[i].Number)
 			if num == 2 {
+				card := p.HandSort[i].Number
+				for j := 0; j < 5; j++ {
+					if p.Hand[j].Number == card {
+						p.Held[j] = true
+					}
+				}
 				return true
 			}
 		}
@@ -240,25 +306,38 @@ func (p *Player) chkFullHouse() bool {
 	return false
 }
 
+var WinKind = [10]string{
+	"Royal Flush",
+	"Straight Flush",
+	"Four of a Kind",
+	"Full House",
+	"Flush",
+	"Straight",
+	"Three of a Kind",
+	"Two Pair",
+	"Jack or Better",
+	"None",
+}
+
 func (p *Player) CheckWin() string {
 	if p.chkRoyalFlush() {
-		return "Royal Flush"
+		return WinKind[0]
 	} else if p.chkStraightFlush() {
-		return "Straight Flush"
+		return WinKind[1]
 	} else if p.chkFourOfKind() {
-		return "Four of a Kind"
+		return WinKind[2]
 	} else if p.chkFullHouse() {
-		return "Full House"
+		return WinKind[3]
 	} else if p.chkFlush() {
-		return "Flush"
+		return WinKind[4]
 	} else if p.chkStraight() {
-		return "Straight"
+		return WinKind[5]
 	} else if p.chkThreeOfKind() {
-		return "Three of a Kind"
+		return WinKind[6]
 	} else if p.chkTwoPair() {
-		return "Two Pair"
+		return WinKind[7]
 	} else if p.chkHighPair() {
-		return "Jack or Better"
+		return WinKind[8]
 	}
-	return "None"
+	return WinKind[9]
 }

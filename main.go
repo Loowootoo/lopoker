@@ -23,15 +23,15 @@ func update(screen *ebiten.Image) error {
 	if ebiten.IsDrawingSkipped() {
 		return nil
 	}
-	for i := 0; i < 5; i++ {
-		//		ui.DrawCard(screen, ui2d.CardPos[i], newGame.Player.Hand[i].GetVal())
-		ui.DrawCard(screen, ui2d.CardPos[i], newGame.Player.HandSort[i].GetVal())
-	}
+	ui.DrawHandCard(screen, newGame.Player.Hand)
+	ui.DrawHandHeld(screen, newGame.Player.Held)
+	ui.DrawMessage(screen, newGame.Message)
 	return nil
 }
 
 func main() {
 	newGame = game.NewGame(1000)
+	newGame.Shuffle()
 	ui = ui2d.NewUI2d()
 	err := ebiten.Run(update, winWidth, winHeight, 1, "LoPoker !!!")
 	if err != nil {
