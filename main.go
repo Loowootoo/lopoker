@@ -23,9 +23,7 @@ func update(screen *ebiten.Image) error {
 	if ebiten.IsDrawingSkipped() {
 		return nil
 	}
-	ui.DrawHandCard(screen, newGame.Player.Hand)
-	ui.DrawHandHeld(screen, newGame.Player.Held)
-	ui.DrawMessage(screen, newGame.Message)
+	ui.Draw(screen, newGame)
 	return nil
 }
 

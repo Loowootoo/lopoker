@@ -19,6 +19,7 @@ type UI2d struct {
 	normalFont font.Face
 	bigFont    font.Face
 	cardGrp    *ebiten.Image
+	bkground   *ebiten.Image
 }
 
 type Pos struct {
@@ -40,6 +41,12 @@ func NewUI2d() *UI2d {
 	}
 
 	ebitenImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	img, _, err = image.Decode(bytes.NewReader(pcard.BkgPNG))
+	if err != nil {
+		panic(err)
+	}
+
+	bkgImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 	tt, err := truetype.Parse(fonts.Water_ttf)
 	if err != nil {
 		panic(err)
@@ -55,7 +62,7 @@ func NewUI2d() *UI2d {
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
-	return &UI2d{normalFont, bigFont, ebitenImage}
+	return &UI2d{normalFont, bigFont, ebitenImage, bkgImage}
 }
 
 func (ui *UI2d) textWidth(str string) int {
@@ -85,6 +92,13 @@ func (ui *UI2d) DrawTextWithShadowRight(rt *ebiten.Image, str string, x, y, scal
 	w := ui.textWidth(str) * scale
 	x += width - w
 	ui.DrawTextWithShadow(rt, str, x, y, scale, clr)
+}
+
+func (ui *UI2d) DrawBackground(screen *ebiten.Image) {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(1, 1)
+	op.GeoM.Translate(0, 0)
+	screen.DrawImage(ui.bkground, op)
 }
 
 const cardWidth = 100
@@ -125,4 +139,11 @@ func (ui *UI2d) DrawHandHeld(screen *ebiten.Image, card [5]bool) {
 
 func (ui *UI2d) DrawMessage(screen *ebiten.Image, msg string) {
 	ui.DrawTextWithShadowCenter(screen, msg, 0, 520, 1, color.White, 600)
+}
+
+func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
+	ui.DrawBackground(screen)
+	ui.DrawHandCard(screen, game.Player.Hand)
+	ui.DrawHandHeld(screen, game.Player.Held)
+	ui.DrawMessage(screen, game.Message)
 }
