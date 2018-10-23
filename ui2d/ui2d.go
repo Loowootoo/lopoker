@@ -2,6 +2,7 @@ package ui2d
 
 import (
 	"Loowootoo/lopoker/game"
+	"Loowootoo/lopoker/sprlib"
 	"Loowootoo/lopoker/ui2d/assets/fonts"
 	"Loowootoo/lopoker/ui2d/assets/pcard"
 	"bytes"
@@ -20,6 +21,7 @@ type UI2d struct {
 	bigFont    font.Face
 	cardGrp    *ebiten.Image
 	bkground   *ebiten.Image
+	smokeAnim  *sprlib.Sprite
 }
 
 type Pos struct {
@@ -39,14 +41,23 @@ func NewUI2d() *UI2d {
 	if err != nil {
 		panic(err)
 	}
-
 	ebitenImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+
 	img, _, err = image.Decode(bytes.NewReader(pcard.BkgPNG))
 	if err != nil {
 		panic(err)
 	}
 
 	bkgImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	//
+	smokeAnim := sprlib.NewSprite()
+	smokeAnim.AddAnimFrameFromBytes("default", pcard.SmokePNG, 15000, 15, ebiten.FilterDefault)
+	smokeAnim.CenterCoordonnates = false
+	smokeAnim.Animated = true
+	smokeAnim.Pos = sprlib.Vector{448, 25, 0}
+	smokeAnim.Speed = 0
+	smokeAnim.Direction = sprlib.Vector{0, 0, 0}
+	//
 	tt, err := truetype.Parse(fonts.Water_ttf)
 	if err != nil {
 		panic(err)
@@ -62,7 +73,7 @@ func NewUI2d() *UI2d {
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
-	return &UI2d{normalFont, bigFont, ebitenImage, bkgImage}
+	return &UI2d{normalFont, bigFont, ebitenImage, bkgImage, smokeAnim}
 }
 
 func (ui *UI2d) textWidth(str string) int {
@@ -146,4 +157,5 @@ func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawHandCard(screen, game.Player.Hand)
 	ui.DrawHandHeld(screen, game.Player.Held)
 	ui.DrawMessage(screen, game.Message)
+	ui.smokeAnim.Draw(screen)
 }
