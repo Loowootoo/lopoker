@@ -2,7 +2,6 @@ package ui2d
 
 import (
 	"Loowootoo/lopoker/game"
-	"Loowootoo/lopoker/sprlib"
 	"Loowootoo/lopoker/ui2d/assets/fonts"
 	"Loowootoo/lopoker/ui2d/assets/pcard"
 	"bytes"
@@ -21,7 +20,6 @@ type UI2d struct {
 	bigFont    font.Face
 	cardGrp    *ebiten.Image
 	bkground   *ebiten.Image
-	smokeAnim  *sprlib.Sprite
 }
 
 type Pos struct {
@@ -50,21 +48,13 @@ func NewUI2d() *UI2d {
 
 	bkgImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 	//
-	smokeAnim := sprlib.NewSprite()
-	smokeAnim.AddAnimFrameFromBytes("default", pcard.SmokePNG, 15000, 15, ebiten.FilterDefault)
-	smokeAnim.CenterCoordonnates = false
-	smokeAnim.Animated = true
-	smokeAnim.Pos = sprlib.Vector{448, 25, 0}
-	smokeAnim.Speed = 0
-	smokeAnim.Direction = sprlib.Vector{0, 0, 0}
-	//
 	tt, err := truetype.Parse(fonts.Water_ttf)
 	if err != nil {
 		panic(err)
 	}
 	const dpi = 72
 	normalFont := truetype.NewFace(tt, &truetype.Options{
-		Size:    16,
+		Size:    20,
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
@@ -73,7 +63,7 @@ func NewUI2d() *UI2d {
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
-	return &UI2d{normalFont, bigFont, ebitenImage, bkgImage, smokeAnim}
+	return &UI2d{normalFont, bigFont, ebitenImage, bkgImage}
 }
 
 func (ui *UI2d) textWidth(str string) int {
@@ -82,14 +72,14 @@ func (ui *UI2d) textWidth(str string) int {
 }
 
 var (
-	shadowColor  = color.NRGBA{0, 0, 0, 0x80}
-	fontBaseSize = 16
+	shadowColor  = color.NRGBA{26, 77, 22, 0x80}
+	fontBaseSize = 20
 )
 
 func (ui *UI2d) DrawTextWithShadow(rt *ebiten.Image, str string, x, y, scale int, clr color.Color) {
 	offsetY := fontBaseSize * scale
 	y += offsetY
-	text.Draw(rt, str, ui.normalFont, x+2, y+2, shadowColor)
+	text.Draw(rt, str, ui.normalFont, x+1, y+1, shadowColor)
 	text.Draw(rt, str, ui.normalFont, x, y, clr)
 }
 
@@ -143,13 +133,13 @@ func (ui *UI2d) DrawHandCard(screen *ebiten.Image, card [5]game.Card) {
 func (ui *UI2d) DrawHandHeld(screen *ebiten.Image, card [5]bool) {
 	for i := 0; i < 5; i++ {
 		if card[i] {
-			ui.DrawTextWithShadowCenter(screen, "HELD", int(CardPos[i].X), int(CardPos[i].Y+150), 1, color.White, 100)
+			ui.DrawTextWithShadowCenter(screen, "HELD", int(CardPos[i].X), int(CardPos[i].Y+165), 1, color.White, 100)
 		}
 	}
 }
 
 func (ui *UI2d) DrawMessage(screen *ebiten.Image, msg string) {
-	ui.DrawTextWithShadowCenter(screen, msg, 0, 520, 1, color.White, 600)
+	ui.DrawTextWithShadowCenter(screen, msg, 248, 562, 1, color.White, 308)
 }
 
 func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
@@ -157,5 +147,5 @@ func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawHandCard(screen, game.Player.Hand)
 	ui.DrawHandHeld(screen, game.Player.Held)
 	ui.DrawMessage(screen, game.Message)
-	ui.smokeAnim.Draw(screen)
+	game.SmokeAnim.Draw(screen)
 }

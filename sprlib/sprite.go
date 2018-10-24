@@ -61,6 +61,7 @@ func newAnimFrameFromBytes(data []byte, duration int, frames int, filter ebiten.
 	animFrame.RunOnce = false
 	return animFrame
 }
+
 func (animFrame *AnimFrame) SetFrameDuration(duration int) {
 	animFrame.FrameDuration = time.Duration(duration)
 	animFrame.TotalFrameDuration = animFrame.FrameDuration * time.Duration(animFrame.MaxFrames)
@@ -74,9 +75,8 @@ type Sprite struct {
 	Pos                Vector
 	Direction          Vector
 	Speed              float64
-	ZoomX              float64
-	ZoomY              float64
 	Alpha              float64
+	Scale              float64
 	Visible            bool
 	Animated           bool
 	CenterCoordonnates bool
@@ -93,8 +93,6 @@ func NewSprite() *Sprite {
 	sprite.Pos = Vector{0, 0, 0}
 	sprite.Speed = 1
 	sprite.Visible = true
-	sprite.ZoomX = 1
-	sprite.ZoomY = 1
 	return sprite
 }
 
@@ -104,39 +102,26 @@ func (sprite *Sprite) AddAnimFrameFromFile(label string, path string, duration i
 func (sprite *Sprite) AddAnimFrameFromBytes(label string, data []byte, duration int, steps int, filter ebiten.Filter) {
 	sprite.AnimFrames[label] = newAnimFrameFromBytes(data, duration, steps, filter)
 }
-
-//Draw calculates new coordonnates and draw the sprite on the screen, after drawing, go to the next step of animation
-func (sprite *Sprite) Draw(surface *ebiten.Image) {
-	if sprite.Visible {
-		currAnimFrame := sprite.AnimFrames[sprite.CurrAnimFrame]
-		options := &ebiten.DrawImageOptions{}
-
-		// move sprite x,y
-		sprite.Pos.X += sprite.Speed * sprite.Direction.X
-		sprite.Pos.Y += sprite.Speed * sprite.Direction.Y
-
-		// apply modification
-		if sprite.CenterCoordonnates {
-			options.GeoM.Translate(-float64(currAnimFrame.FrameWidth)/2, -float64(currAnimFrame.FrameHeight)/2)
-		}
-		options.GeoM.Scale(sprite.ZoomX, sprite.ZoomY)
-		options.GeoM.Translate(sprite.Pos.X, sprite.Pos.Y)
-		options.ColorM.Scale(1, 1, 1, sprite.Alpha)
-		x0 := currAnimFrame.CurrFrame * currAnimFrame.FrameWidth
-		x1 := x0 + currAnimFrame.FrameWidth
-		r := image.Rect(x0, 0, x1, currAnimFrame.FrameHeight)
-		options.SourceRect = &r
-		surface.DrawImage(currAnimFrame.Image, options)
-		sprite.NextFrame()
-	}
+func (sprite *Sprite) GetScale() float64 {
+	return (sprite.Pos.Z/100 + 1) / 2
 }
 
-func (sprite *Sprite) NextFrame() bool {
+func (sprite *Sprite) Update() {
+	sprite.Pos.X += sprite.Speed * sprite.Direction.X
+	sprite.Pos.Y += sprite.Speed * sprite.Direction.Y
+	if sprite.Pos.Z <= 0 {
+		sprite.Direction.Z = 1
+	} else if sprite.Pos.Z >= 100 {
+		sprite.Direction.Z = -1
+	}
+	sprite.Pos.Z += sprite.Speed * sprite.Direction.Z
+	sprite.Scale = sprite.GetScale()
+}
+func (sprite *Sprite) nextFrame() {
 	currAnimFrame := sprite.AnimFrames[sprite.CurrAnimFrame]
 	if sprite.Animated {
 		now := time.Now()
 		nextStepAt := currAnimFrame.CurrFrameTimeStart.Add(currAnimFrame.FrameDuration)
-
 		if now.Sub(nextStepAt) > 0 {
 			currAnimFrame.CurrFrame++
 			if currAnimFrame.CurrFrame+1 > currAnimFrame.MaxFrames {
@@ -144,8 +129,43 @@ func (sprite *Sprite) NextFrame() bool {
 				currAnimFrame.CurrFrame = 0
 			}
 			currAnimFrame.CurrFrameTimeStart = now
-			return true
 		}
 	}
-	return false
+}
+
+//Draw calculates new coordonnates and draw the sprite on the screen, after drawing, go to the next step of animation
+func (sprite *Sprite) Draw(surface *ebiten.Image) {
+	if sprite.Visible {
+		currAnimFrame := sprite.AnimFrames[sprite.CurrAnimFrame]
+		options := &ebiten.DrawImageOptions{}
+
+		if sprite.CenterCoordonnates {
+			options.GeoM.Translate(-float64(currAnimFrame.FrameWidth)/2, -float64(currAnimFrame.FrameHeight)/2)
+		}
+		options.GeoM.Scale(sprite.Scale, sprite.Scale)
+		options.GeoM.Translate(sprite.Pos.X, sprite.Pos.Y)
+		options.ColorM.Scale(1, 1, 1, sprite.Alpha)
+		x0 := currAnimFrame.CurrFrame * currAnimFrame.FrameWidth
+		x1 := x0 + currAnimFrame.FrameWidth
+		r := image.Rect(x0, 0, x1, currAnimFrame.FrameHeight)
+		options.SourceRect = &r
+		surface.DrawImage(currAnimFrame.Image, options)
+		sprite.nextFrame()
+	}
+}
+
+func (sprite *Sprite) Stop() {
+	sprite.Animated = false
+	sprite.Visible = false
+}
+
+func (sprite *Sprite) Reset() {
+	sprite.Animated = false
+	sprite.Visible = false
+	sprite.AnimFrames[sprite.CurrAnimFrame].CurrFrame = 0
+}
+
+func (sprite *Sprite) Start() {
+	sprite.Animated = true
+	sprite.Visible = true
 }

@@ -307,16 +307,16 @@ func (p *Player) chkFullHouse() bool {
 }
 
 var WinKind = [10]string{
-	"Royal Flush",
-	"Straight Flush",
-	"Four of a Kind",
-	"Full House",
-	"Flush",
-	"Straight",
-	"Three of a Kind",
-	"Two Pair",
-	"Jack or Better",
-	"None",
+	"ROYAL FLUSH",
+	"STRAIGHT FLUSH",
+	"FOUR OF A KIND",
+	"FULL HOUSE",
+	"FLUSH",
+	"STRAIGHT",
+	"THREE OF A KIND",
+	"TWO PAIR",
+	"JACK OR BETTER",
+	"NONE",
 }
 
 func (p *Player) CheckWin() string {
