@@ -1,7 +1,7 @@
 package game
 
 import (
-	"Loowootoo/lopoker/sprlib"
+	"Loowootoo/lopoker/genlib"
 	"Loowootoo/lopoker/ui2d/assets/pcard"
 
 	"github.com/hajimehoshi/ebiten"
@@ -10,24 +10,25 @@ import (
 type Game struct {
 	Player        *Player
 	CardSet       *Cards
-	SmokeAnim     *sprlib.Sprite
+	SmokeAnim     *genlib.Sprite
 	Message       string
 	GameStatus    MainGameState
 	GameSubStatus int
+	MsgCounter    *genlib.TimeCounter
 }
 
 func NewGame(credit int) *Game {
 	player := NewPlayer(credit)
 	cardSet := NewCardSet()
-	smokeAnim := sprlib.NewSprite()
-	smokeAnim.AddAnimFrameFromBytes("default", pcard.SmokePNG, 2000, 15, ebiten.FilterDefault)
+	smokeAnim := genlib.NewSprite()
+	smokeAnim.AddAnimFrameFromBytes("default", pcard.SmokePNG, 300, 15, ebiten.FilterDefault)
 	smokeAnim.CenterCoordonnates = true
-	smokeAnim.Pos = sprlib.Vector{576, 153, 100}
+	smokeAnim.Pos = genlib.Vector{576, 153, 100}
 	smokeAnim.Speed = 1
-	smokeAnim.Direction = sprlib.Vector{0, 0, -1}
+	smokeAnim.Direction = genlib.Vector{0, 0, -1}
 	smokeAnim.Start()
-
-	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0}
+	msgCounter := genlib.NewCounter(500)
+	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0, msgCounter}
 }
 
 func (g *Game) AddBet(bet int) {
@@ -60,7 +61,6 @@ func (g *Game) Run() {
 		g.Message = g.Player.CheckWin()
 		testCount = 0
 	}
-	g.SmokeAnim.Update()
 }
 
 type MainGameState int
@@ -88,9 +88,12 @@ var GameMessage = [...]string{
 }
 
 func (g *Game) GameLoop() {
+	if g.IsCreditKey() {
+		g.Player.Credit += 100
+	}
 	switch g.GameStatus {
 	case GameDEMO:
-		game.DemoProc()
+		g.DemoProc()
 	case GameSTART:
 		g.GameStatus = GameBET
 	case GameBET:

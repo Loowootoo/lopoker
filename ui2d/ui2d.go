@@ -8,6 +8,7 @@ import (
 	"image"
 	"image/color"
 	_ "image/png"
+	"strconv"
 
 	"github.com/golang/freetype/truetype"
 	"github.com/hajimehoshi/ebiten"
@@ -141,11 +142,21 @@ func (ui *UI2d) DrawHandHeld(screen *ebiten.Image, card [5]bool) {
 func (ui *UI2d) DrawMessage(screen *ebiten.Image, msg string) {
 	ui.DrawTextWithShadowCenter(screen, msg, 248, 562, 1, color.White, 308)
 }
+func (ui *UI2d) DrawCredit(screen *ebiten.Image, credit int) {
+	s := strconv.Itoa(credit)
+	ui.DrawTextWithShadowCenter(screen, s, 110, 562, 1, color.White, 110)
+}
+func (ui *UI2d) DrawBet(screen *ebiten.Image, bet int) {
+	s := strconv.Itoa(bet)
+	ui.DrawTextWithShadowCenter(screen, s, 720, 562, 1, color.White, 60)
+}
 
 func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawBackground(screen)
 	ui.DrawHandCard(screen, game.Player.Hand)
 	ui.DrawHandHeld(screen, game.Player.Held)
 	ui.DrawMessage(screen, game.Message)
+	ui.DrawCredit(screen, game.Player.Credit)
+	ui.DrawBet(screen, game.Player.Bet)
 	game.SmokeAnim.Draw(screen)
 }

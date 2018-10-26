@@ -19,7 +19,7 @@ func init() {
 }
 
 func update(screen *ebiten.Image) error {
-	newGame.Run()
+	newGame.GameLoop()
 	if ebiten.IsDrawingSkipped() {
 		return nil
 	}
@@ -28,7 +28,7 @@ func update(screen *ebiten.Image) error {
 }
 
 func main() {
-	newGame = game.NewGame(1000)
+	newGame = game.NewGame(0)
 	newGame.Shuffle()
 	ui = ui2d.NewUI2d()
 	err := ebiten.Run(update, winWidth, winHeight, 1, "LoPoker !!!")

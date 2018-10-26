@@ -1,24 +1,21 @@
-package sprlib
+package genlib
 
 import (
 	"bytes"
 	"image"
-	"time"
 
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 type AnimFrame struct {
-	Image              *ebiten.Image
-	MaxFrames          int
-	CurrFrame          int
-	FrameWidth         int
-	FrameHeight        int
-	TotalFrameDuration time.Duration
-	FrameDuration      time.Duration
-	CurrFrameTimeStart time.Time
-	RunOnce            bool
+	Image        *ebiten.Image
+	MaxFrames    int
+	CurrFrame    int
+	FrameWidth   int
+	FrameHeight  int
+	FrameCounter *TimeCounter
+	RunOnce      bool
 }
 
 func newAnimFrameFromFile(fileName string, duration int, frames int, filter ebiten.Filter) *AnimFrame {
@@ -29,14 +26,12 @@ func newAnimFrameFromFile(fileName string, duration int, frames int, filter ebit
 		panic(err)
 	}
 	animFrame.MaxFrames = frames
-	animFrame.TotalFrameDuration = time.Millisecond * time.Duration(duration)
 
 	width, height := animFrame.Image.Size()
 	animFrame.FrameWidth = width / animFrame.MaxFrames
 	animFrame.FrameHeight = height
 
-	animFrame.CurrFrameTimeStart = time.Now()
-	animFrame.FrameDuration = time.Duration(int(animFrame.TotalFrameDuration) / animFrame.MaxFrames)
+	animFrame.FrameCounter = NewCounter(duration)
 	animFrame.RunOnce = false
 	return animFrame
 }
@@ -50,21 +45,18 @@ func newAnimFrameFromBytes(data []byte, duration int, frames int, filter ebiten.
 	animFrame.Image, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
 
 	animFrame.MaxFrames = frames
-	animFrame.TotalFrameDuration = time.Millisecond * time.Duration(duration)
 
 	width, height := animFrame.Image.Size()
 	animFrame.FrameWidth = width / animFrame.MaxFrames
 	animFrame.FrameHeight = height
 
-	animFrame.CurrFrameTimeStart = time.Now()
-	animFrame.FrameDuration = time.Duration(int(animFrame.TotalFrameDuration) / animFrame.MaxFrames)
+	animFrame.FrameCounter = NewCounter(duration)
 	animFrame.RunOnce = false
 	return animFrame
 }
 
 func (animFrame *AnimFrame) SetFrameDuration(duration int) {
-	animFrame.FrameDuration = time.Duration(duration)
-	animFrame.TotalFrameDuration = animFrame.FrameDuration * time.Duration(animFrame.MaxFrames)
+	animFrame.FrameCounter.ResetCounter(duration)
 }
 
 type Sprite struct {
@@ -120,15 +112,12 @@ func (sprite *Sprite) Update() {
 func (sprite *Sprite) nextFrame() {
 	currAnimFrame := sprite.AnimFrames[sprite.CurrAnimFrame]
 	if sprite.Animated {
-		now := time.Now()
-		nextStepAt := currAnimFrame.CurrFrameTimeStart.Add(currAnimFrame.FrameDuration)
-		if now.Sub(nextStepAt) > 0 {
+		if currAnimFrame.FrameCounter.TimeUp() {
 			currAnimFrame.CurrFrame++
 			if currAnimFrame.CurrFrame+1 > currAnimFrame.MaxFrames {
 				currAnimFrame.RunOnce = true
 				currAnimFrame.CurrFrame = 0
 			}
-			currAnimFrame.CurrFrameTimeStart = now
 		}
 	}
 }

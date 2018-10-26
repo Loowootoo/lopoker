@@ -1,4 +1,4 @@
-package sprlib
+package genlib
 
 import (
 	"fmt"
