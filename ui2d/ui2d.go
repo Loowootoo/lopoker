@@ -1,9 +1,9 @@
 package ui2d
 
 import (
-	"Loowootoo/lopoker/game"
-	"Loowootoo/lopoker/ui2d/assets/fonts"
-	"Loowootoo/lopoker/ui2d/assets/pcard"
+	"github.com/Loowootoo/lopoker/game"
+	"github.com/Loowootoo/lopoker/ui2d/assets/fonts"
+	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
 	"bytes"
 	"image"
 	"image/color"
