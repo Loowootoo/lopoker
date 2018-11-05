@@ -15,6 +15,8 @@ type Game struct {
 	GameStatus    MainGameState
 	GameSubStatus int
 	MsgCounter    *genlib.TimeCounter
+	GameWin       int
+	WinStr        string
 }
 
 func NewGame(credit int) *Game {
@@ -28,7 +30,7 @@ func NewGame(credit int) *Game {
 	smokeAnim.Direction = genlib.Vector{0, 0, -1}
 	smokeAnim.Start()
 	msgCounter := genlib.NewCounter(500)
-	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0, msgCounter}
+	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0, msgCounter, 0, ""}
 }
 
 func (g *Game) AddBet(bet int) {
@@ -43,6 +45,17 @@ func (g *Game) Deal() {
 	g.Player.ResetHeld()
 	for i := 0; i < len(g.Player.Hand); i++ {
 		g.Player.Hand[i] = g.CardSet.GetNextCard()
+	}
+	g.Player.sortHand()
+	g.Player.ResetBackCard()
+}
+
+func (g *Game) DealWithHeld() {
+	for i := 0; i < 5; i++ {
+		if g.Player.Held[i] == false {
+			g.Player.Hand[i] = g.CardSet.GetNextCard()
+			g.Player.BackCard[i] = true
+		}
 	}
 	g.Player.sortHand()
 }
@@ -95,13 +108,18 @@ func (g *Game) GameLoop() {
 	case GameDEMO:
 		g.DemoProc()
 	case GameSTART:
-		g.GameStatus = GameBET
+		g.GameStartProc()
 	case GameBET:
-		g.GameStatus = GamePLAY
+		g.GameBetProc()
 	case GamePLAY:
+		g.GamePlayProc()
 	case GameCHECK:
+		g.GameCheckProc()
 	case GameWIN:
+		g.GameWinProc()
 	case GameLOSE:
+		g.GameLoseProc()
 	case GameACCOUNT:
+		g.GameAccountProc()
 	}
 }

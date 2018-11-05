@@ -117,14 +117,21 @@ func (ui *UI2d) DrawCard(screen *ebiten.Image, pos Pos, num int) {
 	screen.DrawImage(ui.cardGrp, op)
 }
 
-func (ui *UI2d) DrawHandCard(screen *ebiten.Image, card [5]game.Card) {
+func (ui *UI2d) DrawHandCard(screen *ebiten.Image, card [5]game.Card, back [5]bool) {
 	op := &ebiten.DrawImageOptions{}
 	for i := 0; i < 5; i++ {
 		op.GeoM.Reset()
-		x := card[i].Number * cardWidth
-		y := card[i].Pattern * cardHeight
-		srcRect := image.Rect(x, y, x+cardWidth, y+cardHeight)
-		op.SourceRect = &srcRect
+		if back[i] {
+			x := 3 * cardWidth
+			y := 4 * cardHeight
+			srcRect := image.Rect(x, y, x+cardWidth, y+cardHeight)
+			op.SourceRect = &srcRect
+		} else {
+			x := card[i].Number * cardWidth
+			y := card[i].Pattern * cardHeight
+			srcRect := image.Rect(x, y, x+cardWidth, y+cardHeight)
+			op.SourceRect = &srcRect
+		}
 		op.GeoM.Scale(1, 1)
 		op.GeoM.Translate(CardPos[i].X, CardPos[i].Y)
 		screen.DrawImage(ui.cardGrp, op)
@@ -153,7 +160,7 @@ func (ui *UI2d) DrawBet(screen *ebiten.Image, bet int) {
 
 func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawBackground(screen)
-	ui.DrawHandCard(screen, game.Player.Hand)
+	ui.DrawHandCard(screen, game.Player.Hand, game.Player.BackCard)
 	ui.DrawHandHeld(screen, game.Player.Held)
 	ui.DrawMessage(screen, game.Message)
 	ui.DrawCredit(screen, game.Player.Credit)

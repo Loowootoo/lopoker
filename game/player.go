@@ -8,25 +8,18 @@ type Player struct {
 	Hand     [5]Card
 	HandSort [5]Card
 	Held     [5]bool
+	BackCard [5]bool
 	Credit   int
 	Bet      int
 }
 
 func NewPlayer(credit int) *Player {
-	return &Player{Credit: credit, Bet: 0}
-}
-
-var OddsTable = map[string]int{
-	"Royal Flush":     800,
-	"Straight Flush":  50,
-	"Four of a Kind":  25,
-	"Full House":      9,
-	"Flush":           6,
-	"Straight":        4,
-	"Three of a Kind": 3,
-	"Two Pair":        2,
-	"Jack or Better":  1,
-	"None":            0,
+	player := new(Player)
+	player.Credit = credit
+	player.Bet = 0
+	player.ResetBackCard()
+	player.ResetHeld()
+	return player
 }
 
 const (
@@ -119,13 +112,21 @@ func (p *Player) ResetHeld() {
 		p.Held[i] = false
 	}
 }
-
+func (p *Player) ResetBackCard() {
+	for i := 0; i < 5; i++ {
+		p.BackCard[i] = true
+	}
+}
 func (p *Player) setHeld(sortIndex int) {
 	for i := 0; i < 5; i++ {
 		if p.HandSort[sortIndex].Number == p.Hand[i].Number && p.HandSort[sortIndex].Pattern == p.Hand[i].Pattern {
 			p.Held[i] = true
 		}
 	}
+}
+
+func (p *Player) SetBackCard(i int, status bool) {
+	p.BackCard[i] = status
 }
 
 func (p *Player) chkRoyal() bool {
