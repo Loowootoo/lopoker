@@ -1,14 +1,17 @@
 package ui2d
 
 import (
-	"github.com/Loowootoo/lopoker/game"
-	"github.com/Loowootoo/lopoker/ui2d/assets/fonts"
-	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
 	"bytes"
 	"image"
 	"image/color"
 	_ "image/png"
 	"strconv"
+
+	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
+
+	"github.com/Loowootoo/lopoker/ui2d/assets/fonts"
+
+	"github.com/Loowootoo/lopoker/game"
 
 	"github.com/golang/freetype/truetype"
 	"github.com/hajimehoshi/ebiten"

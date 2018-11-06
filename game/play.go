@@ -48,6 +48,7 @@ func (g *Game) GamePlayProc() {
 		if g.MsgCounter.TimeUp() {
 			g.GameSubStatus++
 			g.Player.SetBackCard(4, false)
+			g.Player.CheckWin()
 		}
 	case 5:
 		if g.MsgCounter.TimeUp() {

@@ -122,4 +122,5 @@ func (g *Game) GameLoop() {
 	case GameACCOUNT:
 		g.GameAccountProc()
 	}
+	g.SmokeAnim.Update()
 }
