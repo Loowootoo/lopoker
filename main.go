@@ -1,8 +1,8 @@
 package main
 
 import (
-	"Loowootoo/lopoker/game"
-	"Loowootoo/lopoker/ui2d"
+	"github.com/Loowootoo/lopoker/game"
+	"github.com/Loowootoo/lopoker/ui2d"
 	"math/rand"
 	"time"
 

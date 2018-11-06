@@ -1,8 +1,8 @@
 package game
 
 import (
-	"Loowootoo/lopoker/genlib"
-	"Loowootoo/lopoker/ui2d/assets/pcard"
+	"github.com/Loowootoo/lopoker/genlib"
+	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
 
 	"github.com/hajimehoshi/ebiten"
 )
@@ -122,4 +122,5 @@ func (g *Game) GameLoop() {
 	case GameACCOUNT:
 		g.GameAccountProc()
 	}
+	g.SmokeAnim.Update()
 }
