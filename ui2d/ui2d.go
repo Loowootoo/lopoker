@@ -161,6 +161,17 @@ func (ui *UI2d) DrawBet(screen *ebiten.Image, bet int) {
 	ui.DrawTextWithShadowCenter(screen, s, 720, 562, 1, color.White, 60)
 }
 
+var odds = [9]int{
+	800, 50, 25, 9, 6, 4, 3, 2, 1,
+}
+
+func (ui *UI2d) DrawOdds(screen *ebiten.Image, bet int) {
+	for i := 0; i < 9; i++ {
+		s := strconv.Itoa(bet * odds[i])
+		ui.DrawTextWithShadowRight(screen, s, 316, 10+i*34, 1, color.White, 60)
+	}
+}
+
 func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawBackground(screen)
 	ui.DrawHandCard(screen, game.Player.Hand, game.Player.BackCard)
@@ -168,5 +179,6 @@ func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawMessage(screen, game.Message)
 	ui.DrawCredit(screen, game.Player.Credit)
 	ui.DrawBet(screen, game.Player.Bet)
+	ui.DrawOdds(screen, game.Player.Bet)
 	game.SmokeAnim.Draw(screen)
 }
