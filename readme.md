@@ -9,7 +9,5 @@
 * S for start
 * 1 - 5 for held1 - held5  
   
-> Sound effect & music not implement  
-> animation is for test
 
 ![screenshot](lopoker.gif)
