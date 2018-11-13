@@ -11,6 +11,8 @@ func (g *Game) GameWinProc() {
 		if g.WinCounter.TimeUp() {
 			g.Player.Credit++
 			g.GameWin--
+			g.Sound.Coin.Rewind()
+			g.Sound.Coin.Play()
 			if g.GameWin == 0 {
 				g.GameSubStatus++
 			}

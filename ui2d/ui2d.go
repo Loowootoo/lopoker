@@ -63,7 +63,7 @@ func NewUI2d() *UI2d {
 		Hinting: font.HintingFull,
 	})
 	bigFont := truetype.NewFace(tt, &truetype.Options{
-		Size:    24,
+		Size:    48,
 		DPI:     dpi,
 		Hinting: font.HintingFull,
 	})
@@ -174,8 +174,8 @@ func (ui *UI2d) DrawOdds(screen *ebiten.Image, bet int) {
 
 func (ui *UI2d) DrawWin(screen *ebiten.Image, win int) {
 	s := strconv.Itoa(win)
-	ui.DrawTextWithShadowCenter(screen, "YOU WIN", 516, 120, 2, color.White, 200)
-	ui.DrawTextWithShadowCenter(screen, s, 516, 200, 2, color.White, 200)
+	ui.DrawTextWithShadowCenter(screen, "YOU WIN", 516, 120, 1, color.White, 200)
+	ui.DrawTextWithShadowCenter(screen, s, 516, 200, 1, color.White, 200)
 }
 
 func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {

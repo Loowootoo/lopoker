@@ -18,6 +18,7 @@ type Game struct {
 	WinCounter    *genlib.TimeCounter
 	GameWin       int
 	WinStr        string
+	Sound         *SndEffect
 }
 
 func NewGame(credit int) *Game {
@@ -32,7 +33,8 @@ func NewGame(credit int) *Game {
 	smokeAnim.Start()
 	msgCounter := genlib.NewCounter(500)
 	winCounter := genlib.NewCounter(150)
-	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0, msgCounter, winCounter, 0, ""}
+	sound := NewSndEffect()
+	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0, msgCounter, winCounter, 0, "", sound}
 }
 
 func (g *Game) AddBet(bet int) {
@@ -104,6 +106,8 @@ var GameMessage = [...]string{
 
 func (g *Game) GameLoop() {
 	if g.IsCreditKey() {
+		g.Sound.Credit.Rewind()
+		g.Sound.Credit.Play()
 		g.Player.Credit += 100
 	}
 	switch g.GameStatus {

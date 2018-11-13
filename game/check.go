@@ -23,6 +23,8 @@ func (g *Game) GameCheckProc() {
 		if g.GameWin > 0 {
 			g.GameStatus = GameWIN
 			g.GameSubStatus = 0
+			g.Sound.Win.Rewind()
+			g.Sound.Win.Play()
 		} else {
 			g.GameStatus = GameLOSE
 			g.GameSubStatus = 0

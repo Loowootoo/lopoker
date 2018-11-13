@@ -9,6 +9,8 @@ func (g *Game) GameBetProc() {
 	if g.IsBetKey() {
 		g.Player.Credit--
 		g.Player.Bet++
+		g.Sound.Coin.Rewind()
+		g.Sound.Coin.Play()
 	}
 	if g.Player.Bet > 0 && g.IsStartKey() {
 		g.GameStatus = GamePLAY

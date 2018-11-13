@@ -2,18 +2,28 @@ package game
 
 func (g *Game) getHeld() {
 	if g.IsHeldKey1() {
+		g.Sound.Held.Rewind()
+		g.Sound.Held.Play()
 		g.Player.Held[0] = !g.Player.Held[0]
 	}
 	if g.IsHeldKey2() {
+		g.Sound.Held.Rewind()
+		g.Sound.Held.Play()
 		g.Player.Held[1] = !g.Player.Held[1]
 	}
 	if g.IsHeldKey3() {
+		g.Sound.Held.Rewind()
+		g.Sound.Held.Play()
 		g.Player.Held[2] = !g.Player.Held[2]
 	}
 	if g.IsHeldKey4() {
+		g.Sound.Held.Rewind()
+		g.Sound.Held.Play()
 		g.Player.Held[3] = !g.Player.Held[3]
 	}
 	if g.IsHeldKey5() {
+		g.Sound.Held.Rewind()
+		g.Sound.Held.Play()
 		g.Player.Held[4] = !g.Player.Held[4]
 	}
 }
