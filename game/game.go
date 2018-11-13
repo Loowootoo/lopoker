@@ -15,6 +15,7 @@ type Game struct {
 	GameStatus    MainGameState
 	GameSubStatus int
 	MsgCounter    *genlib.TimeCounter
+	WinCounter    *genlib.TimeCounter
 	GameWin       int
 	WinStr        string
 }
@@ -30,7 +31,8 @@ func NewGame(credit int) *Game {
 	smokeAnim.Direction = genlib.Vector{0, 0, -1}
 	smokeAnim.Start()
 	msgCounter := genlib.NewCounter(500)
-	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0, msgCounter, 0, ""}
+	winCounter := genlib.NewCounter(150)
+	return &Game{player, cardSet, smokeAnim, "", GameDEMO, 0, msgCounter, winCounter, 0, ""}
 }
 
 func (g *Game) AddBet(bet int) {

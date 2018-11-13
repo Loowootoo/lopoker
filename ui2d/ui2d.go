@@ -172,6 +172,12 @@ func (ui *UI2d) DrawOdds(screen *ebiten.Image, bet int) {
 	}
 }
 
+func (ui *UI2d) DrawWin(screen *ebiten.Image, win int) {
+	s := strconv.Itoa(win)
+	ui.DrawTextWithShadowCenter(screen, "YOU WIN", 516, 120, 2, color.White, 200)
+	ui.DrawTextWithShadowCenter(screen, s, 516, 200, 2, color.White, 200)
+}
+
 func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawBackground(screen)
 	ui.DrawHandCard(screen, game.Player.Hand, game.Player.BackCard)
@@ -180,5 +186,9 @@ func (ui *UI2d) Draw(screen *ebiten.Image, game *game.Game) {
 	ui.DrawCredit(screen, game.Player.Credit)
 	ui.DrawBet(screen, game.Player.Bet)
 	ui.DrawOdds(screen, game.Player.Bet)
-	game.SmokeAnim.Draw(screen)
+	if game.GameWin > 0 {
+		ui.DrawWin(screen, game.GameWin)
+	} else {
+		game.SmokeAnim.Draw(screen)
+	}
 }
