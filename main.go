@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/Loowootoo/lopoker/game"
-	"github.com/Loowootoo/lopoker/ui2d"
 	"math/rand"
 	"time"
+
+	"lopoker/game"
+	"lopoker/ui2d"
 
 	"github.com/hajimehoshi/ebiten"
 )

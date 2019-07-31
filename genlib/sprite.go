@@ -5,7 +5,7 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/ebitenutil"
+//	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 type AnimFrame struct {
@@ -17,7 +17,7 @@ type AnimFrame struct {
 	FrameCounter *TimeCounter
 	RunOnce      bool
 }
-
+/*
 func newAnimFrameFromFile(fileName string, duration int, frames int, filter ebiten.Filter) *AnimFrame {
 	var err error
 	animFrame := new(AnimFrame)
@@ -35,7 +35,7 @@ func newAnimFrameFromFile(fileName string, duration int, frames int, filter ebit
 	animFrame.RunOnce = false
 	return animFrame
 }
-
+*/
 func newAnimFrameFromBytes(data []byte, duration int, frames int, filter ebiten.Filter) *AnimFrame {
 	animFrame := new(AnimFrame)
 	img, _, err := image.Decode(bytes.NewReader(data))
@@ -87,10 +87,11 @@ func NewSprite() *Sprite {
 	sprite.Visible = true
 	return sprite
 }
-
+/*
 func (sprite *Sprite) AddAnimFrameFromFile(label string, path string, duration int, steps int, filter ebiten.Filter) {
 	sprite.AnimFrames[label] = newAnimFrameFromFile(path, duration, steps, filter)
 }
+*/
 func (sprite *Sprite) AddAnimFrameFromBytes(label string, data []byte, duration int, steps int, filter ebiten.Filter) {
 	sprite.AnimFrames[label] = newAnimFrameFromBytes(data, duration, steps, filter)
 }
