@@ -1,8 +1,8 @@
 package game
 
 import (
-	"github.com/Loowootoo/lopoker/genlib"
-	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
+	"lopoker/genlib"
+	"lopoker/ui2d/assets/pcard"
 
 	"github.com/hajimehoshi/ebiten"
 )

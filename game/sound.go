@@ -3,7 +3,7 @@ package game
 import (
 	"log"
 
-	"github.com/Loowootoo/lopoker/ui2d/assets/sound"
+	"lopoker/ui2d/assets/sound"
 
 	"github.com/hajimehoshi/ebiten/audio"
 	"github.com/hajimehoshi/ebiten/audio/wav"

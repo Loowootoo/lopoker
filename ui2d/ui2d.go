@@ -7,11 +7,11 @@ import (
 	_ "image/png"
 	"strconv"
 
-	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
+	"lopoker/ui2d/assets/pcard"
 
-	"github.com/Loowootoo/lopoker/ui2d/assets/fonts"
+	"lopoker/ui2d/assets/fonts"
 
-	"github.com/Loowootoo/lopoker/game"
+	"lopoker/game"
 
 	"github.com/golang/freetype/truetype"
 	"github.com/hajimehoshi/ebiten"
