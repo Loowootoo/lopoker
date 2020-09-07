@@ -27,9 +27,9 @@ func NewGame(credit int) *Game {
 	smokeAnim := genlib.NewSprite()
 	smokeAnim.AddAnimFrameFromBytes("default", pcard.SmokePNG, 300, 15, ebiten.FilterDefault)
 	smokeAnim.CenterCoordonnates = true
-	smokeAnim.Pos = genlib.Vector{576, 153, 100}
+	smokeAnim.Pos = genlib.Vec2{576, 153, 100}
 	smokeAnim.Speed = 1
-	smokeAnim.Direction = genlib.Vector{0, 0, -1}
+	smokeAnim.Direction = genlib.Vec2{0, 0, -1}
 	smokeAnim.Start()
 	msgCounter := genlib.NewCounter(500)
 	winCounter := genlib.NewCounter(150)

@@ -5,7 +5,6 @@ import (
 	"image"
 
 	"github.com/hajimehoshi/ebiten"
-
 )
 
 type AnimFrame struct {
@@ -17,6 +16,7 @@ type AnimFrame struct {
 	FrameCounter *TimeCounter
 	RunOnce      bool
 }
+
 /*
 func newAnimFrameFromFile(fileName string, duration int, frames int, filter ebiten.Filter) *AnimFrame {
 	var err error
@@ -64,8 +64,8 @@ type Sprite struct {
 	CurrAnimFrame string
 	// Array of animations
 	AnimFrames         map[string]*AnimFrame
-	Pos                Vector
-	Direction          Vector
+	Pos                Vec2
+	Direction          Vec2
 	Speed              float64
 	Alpha              float64
 	Scale              float64
@@ -81,12 +81,13 @@ func NewSprite() *Sprite {
 	sprite.Alpha = 1
 	sprite.Animated = false
 	sprite.CenterCoordonnates = true
-	sprite.Direction = Vector{0, 0, 0}
-	sprite.Pos = Vector{0, 0, 0}
+	sprite.Direction = Vec2{0, 0, 0}
+	sprite.Pos = Vec2{0, 0, 0}
 	sprite.Speed = 1
 	sprite.Visible = true
 	return sprite
 }
+
 /*
 func (sprite *Sprite) AddAnimFrameFromFile(label string, path string, duration int, steps int, filter ebiten.Filter) {
 	sprite.AnimFrames[label] = newAnimFrameFromFile(path, duration, steps, filter)

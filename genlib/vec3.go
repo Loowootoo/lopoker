@@ -5,21 +5,21 @@ import (
 	"math"
 )
 
-type Vector struct {
+type Vec2 struct {
 	X, Y, Z float64
 }
 
 //向量常數值
 var (
-	Zero     = Vector{0, 0, 0}
-	Up       = Vector{0, 1, 0}
-	Down     = Vector{0, -1, 0}
-	Left     = Vector{-1, 0, 0}
-	Right    = Vector{1, 0, 0}
-	Forward  = Vector{0, 0, 1}
-	Backward = Vector{0, 0, -1}
-	One      = Vector{1, 1, 1}
-	MinusOne = Vector{-1, -1, -1}
+	Zero     = Vec2{0, 0, 0}
+	Up       = Vec2{0, 1, 0}
+	Down     = Vec2{0, -1, 0}
+	Left     = Vec2{-1, 0, 0}
+	Right    = Vec2{1, 0, 0}
+	Forward  = Vec2{0, 0, 1}
+	Backward = Vec2{0, 0, -1}
+	One      = Vec2{1, 1, 1}
+	MinusOne = Vec2{-1, -1, -1}
 )
 
 func Roundf(val float64, places int) float64 {
@@ -47,45 +47,45 @@ func LerpAngle(from, to float64, t float64) float64 {
 	return from + ((to - from) * t)
 }
 
-func (v *Vector) String() string {
+func (v *Vec2) String() string {
 	return fmt.Sprintf("(%f,%f,%f)", v.X, v.Y, v.Z)
 }
 
-func NewVector2(x, y float64) Vector {
-	return Vector{x, y, 1}
+func NewVec22(x, y float64) Vec2 {
+	return Vec2{x, y, 1}
 }
 
-func NewVector3(x, y, z float64) Vector {
-	return Vector{x, y, z}
+func NewVec23(x, y, z float64) Vec2 {
+	return Vec2{x, y, z}
 }
 
-func (v *Vector) Add(vect Vector) Vector {
-	return Vector{v.X + vect.X, v.Y + vect.Y, v.Z + vect.Z}
+func (v *Vec2) Add(vect Vec2) Vec2 {
+	return Vec2{v.X + vect.X, v.Y + vect.Y, v.Z + vect.Z}
 }
 
-func (v *Vector) Sub(vect Vector) Vector {
-	return Vector{v.X - vect.X, v.Y - vect.Y, v.Z - vect.Z}
+func (v *Vec2) Sub(vect Vec2) Vec2 {
+	return Vec2{v.X - vect.X, v.Y - vect.Y, v.Z - vect.Z}
 }
 
-func (v *Vector) Mul(vect Vector) Vector {
-	return Vector{v.X * vect.X, v.Y * vect.Y, v.Z * vect.Z}
+func (v *Vec2) Mul(vect Vec2) Vec2 {
+	return Vec2{v.X * vect.X, v.Y * vect.Y, v.Z * vect.Z}
 }
 
-func (v *Vector) Mul2(vect float64) Vector {
-	return Vector{v.X * vect, v.Y * vect, v.Z * vect}
+func (v *Vec2) Mul2(vect float64) Vec2 {
+	return Vec2{v.X * vect, v.Y * vect, v.Z * vect}
 }
 
-func (v *Vector) Distance(vect Vector) float64 {
+func (v *Vec2) Distance(vect Vec2) float64 {
 	x := v.X - vect.X
 	y := v.Y - vect.Y
 	return math.Sqrt(float64(x*x + y*y))
 }
 
-func (v *Vector) Div(vect Vector) Vector {
-	return Vector{v.X / vect.X, v.Y / vect.Y, v.Z / vect.Z}
+func (v *Vec2) Div(vect Vec2) Vec2 {
+	return Vec2{v.X / vect.X, v.Y / vect.Y, v.Z / vect.Z}
 }
 
-func (v *Vector) fixAngle() {
+func (v *Vec2) fixAngle() {
 	for v.X >= 360 {
 		v.X -= 360
 	}
@@ -108,25 +108,25 @@ func (v *Vector) fixAngle() {
 	}
 }
 
-func (v *Vector) Length() float64 {
+func (v *Vec2) Length() float64 {
 	return math.Sqrt(v.X*v.X + v.Y*v.Y)
 }
 
-func Lerp(from, to Vector, t float64) Vector {
-	return NewVector2(from.X+((to.X-from.X)*t), from.Y+((to.Y-from.Y)*t))
+func Lerp(from, to Vec2, t float64) Vec2 {
+	return NewVec22(from.X+((to.X-from.X)*t), from.Y+((to.Y-from.Y)*t))
 }
 
-func (v *Vector) Normalize() {
+func (v *Vec2) Normalize() {
 	l := v.Length()
 	v.X /= l
 	v.Y /= l
 	v.Z /= l
 }
 
-func (v *Vector) Normalized() Vector {
+func (v *Vec2) Normalized() Vec2 {
 	l := v.Length()
 	if l == 0 {
-		return NewVector3(0, 0, 0)
+		return NewVec23(0, 0, 0)
 	}
-	return NewVector3(v.X/l, v.Y/l, v.Z/l)
+	return NewVec23(v.X/l, v.Y/l, v.Z/l)
 }
