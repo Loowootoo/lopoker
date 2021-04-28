@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"image"
 
-	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type AnimFrame struct {
@@ -36,13 +36,13 @@ func newAnimFrameFromFile(fileName string, duration int, frames int, filter ebit
 	return animFrame
 }
 */
-func newAnimFrameFromBytes(data []byte, duration int, frames int, filter ebiten.Filter) *AnimFrame {
+func newAnimFrameFromBytes(data []byte, duration int, frames int) *AnimFrame {
 	animFrame := new(AnimFrame)
 	img, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		panic(err)
 	}
-	animFrame.Image, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	animFrame.Image = ebiten.NewImageFromImage(img)
 
 	animFrame.MaxFrames = frames
 
@@ -93,8 +93,8 @@ func (sprite *Sprite) AddAnimFrameFromFile(label string, path string, duration i
 	sprite.AnimFrames[label] = newAnimFrameFromFile(path, duration, steps, filter)
 }
 */
-func (sprite *Sprite) AddAnimFrameFromBytes(label string, data []byte, duration int, steps int, filter ebiten.Filter) {
-	sprite.AnimFrames[label] = newAnimFrameFromBytes(data, duration, steps, filter)
+func (sprite *Sprite) AddAnimFrameFromBytes(label string, data []byte, duration int, steps int) {
+	sprite.AnimFrames[label] = newAnimFrameFromBytes(data, duration, steps)
 }
 func (sprite *Sprite) GetScale() float64 {
 	return (sprite.Pos.Z/100 + 1) / 2
@@ -139,8 +139,7 @@ func (sprite *Sprite) Draw(surface *ebiten.Image) {
 		x0 := currAnimFrame.CurrFrame * currAnimFrame.FrameWidth
 		x1 := x0 + currAnimFrame.FrameWidth
 		r := image.Rect(x0, 0, x1, currAnimFrame.FrameHeight)
-		options.SourceRect = &r
-		surface.DrawImage(currAnimFrame.Image, options)
+		surface.DrawImage(currAnimFrame.Image.SubImage(r).(*ebiten.Image), options)
 		sprite.nextFrame()
 	}
 }

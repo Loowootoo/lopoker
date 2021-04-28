@@ -7,15 +7,15 @@ import (
 	_ "image/png"
 	"strconv"
 
-	"lopoker/ui2d/assets/pcard"
+	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
 
-	"lopoker/ui2d/assets/fonts"
+	"github.com/Loowootoo/lopoker/ui2d/assets/fonts"
 
-	"lopoker/game"
+	"github.com/Loowootoo/lopoker/game"
 
 	"github.com/golang/freetype/truetype"
-	"github.com/hajimehoshi/ebiten"
-	"github.com/hajimehoshi/ebiten/text"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font"
 )
 
@@ -43,14 +43,14 @@ func NewUI2d() *UI2d {
 	if err != nil {
 		panic(err)
 	}
-	ebitenImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	ebitenImage := ebiten.NewImageFromImage(img)
 
 	img, _, err = image.Decode(bytes.NewReader(pcard.BkgPNG))
 	if err != nil {
 		panic(err)
 	}
 
-	bkgImage, _ := ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	bkgImage := ebiten.NewImageFromImage(img)
 	//
 	tt, err := truetype.Parse(fonts.Water_ttf)
 	if err != nil {
@@ -114,30 +114,28 @@ func (ui *UI2d) DrawCard(screen *ebiten.Image, pos Pos, num int) {
 	x := (num % 13) * cardWidth
 	y := (num / 13) * cardHeight
 	srcRect := image.Rect(x, y, x+cardWidth, y+cardHeight)
-	op.SourceRect = &srcRect
 	op.GeoM.Scale(1, 1)
 	op.GeoM.Translate(pos.X, pos.Y)
-	screen.DrawImage(ui.cardGrp, op)
+	screen.DrawImage(ui.cardGrp.SubImage(srcRect).(*ebiten.Image), op)
 }
 
 func (ui *UI2d) DrawHandCard(screen *ebiten.Image, card [5]game.Card, back [5]bool) {
 	op := &ebiten.DrawImageOptions{}
+	var srcRect image.Rectangle
 	for i := 0; i < 5; i++ {
 		op.GeoM.Reset()
 		if back[i] {
 			x := 3 * cardWidth
 			y := 4 * cardHeight
-			srcRect := image.Rect(x, y, x+cardWidth, y+cardHeight)
-			op.SourceRect = &srcRect
+			srcRect = image.Rect(x, y, x+cardWidth, y+cardHeight)
 		} else {
 			x := card[i].Number * cardWidth
 			y := card[i].Pattern * cardHeight
-			srcRect := image.Rect(x, y, x+cardWidth, y+cardHeight)
-			op.SourceRect = &srcRect
+			srcRect = image.Rect(x, y, x+cardWidth, y+cardHeight)
 		}
 		op.GeoM.Scale(1, 1)
 		op.GeoM.Translate(CardPos[i].X, CardPos[i].Y)
-		screen.DrawImage(ui.cardGrp, op)
+		screen.DrawImage(ui.cardGrp.SubImage(srcRect).(*ebiten.Image), op)
 	}
 }
 

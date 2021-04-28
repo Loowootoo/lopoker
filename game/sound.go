@@ -1,12 +1,13 @@
 package game
 
 import (
+	"bytes"
 	"log"
 
-	"lopoker/ui2d/assets/sound"
+	"github.com/Loowootoo/lopoker/ui2d/assets/sound"
 
-	"github.com/hajimehoshi/ebiten/audio"
-	"github.com/hajimehoshi/ebiten/audio/wav"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 )
 
 type SndEffect struct {
@@ -19,8 +20,8 @@ type SndEffect struct {
 
 func NewSndEffect() *SndEffect {
 	sndEffect := new(SndEffect)
-	audioContext, _ := audio.NewContext(44100)
-	wd, err := wav.Decode(audioContext, audio.BytesReadSeekCloser(sound.SndCreditWAVE))
+	audioContext := audio.NewContext(44100)
+	wd, err := wav.Decode(audioContext, bytes.NewReader(sound.SndCreditWAVE))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,7 +29,7 @@ func NewSndEffect() *SndEffect {
 	if err != nil {
 		log.Fatal(err)
 	}
-	wd, err = wav.Decode(audioContext, audio.BytesReadSeekCloser(sound.SndCoinWAVE))
+	wd, err = wav.Decode(audioContext, bytes.NewReader(sound.SndCoinWAVE))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +37,7 @@ func NewSndEffect() *SndEffect {
 	if err != nil {
 		log.Fatal(err)
 	}
-	wd, err = wav.Decode(audioContext, audio.BytesReadSeekCloser(sound.SndWinWAVE))
+	wd, err = wav.Decode(audioContext, bytes.NewReader(sound.SndWinWAVE))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,7 +45,7 @@ func NewSndEffect() *SndEffect {
 	if err != nil {
 		log.Fatal(err)
 	}
-	wd, err = wav.Decode(audioContext, audio.BytesReadSeekCloser(sound.SndHeldWAVE))
+	wd, err = wav.Decode(audioContext, bytes.NewReader(sound.SndHeldWAVE))
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,10 +1,8 @@
 package game
 
 import (
-	"lopoker/genlib"
-	"lopoker/ui2d/assets/pcard"
-
-	"github.com/hajimehoshi/ebiten"
+	"github.com/Loowootoo/lopoker/genlib"
+	"github.com/Loowootoo/lopoker/ui2d/assets/pcard"
 )
 
 type Game struct {
@@ -25,7 +23,7 @@ func NewGame(credit int) *Game {
 	player := NewPlayer(credit)
 	cardSet := NewCardSet()
 	smokeAnim := genlib.NewSprite()
-	smokeAnim.AddAnimFrameFromBytes("default", pcard.SmokePNG, 300, 15, ebiten.FilterDefault)
+	smokeAnim.AddAnimFrameFromBytes("default", pcard.SmokePNG, 300, 15)
 	smokeAnim.CenterCoordonnates = true
 	smokeAnim.Pos = genlib.Vec2{576, 153, 100}
 	smokeAnim.Speed = 1
